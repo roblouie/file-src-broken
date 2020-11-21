@@ -7,22 +7,15 @@
     </ion-header>
     
     <ion-content :fullscreen="true">
-      <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title size="large">Blank</ion-title>
-        </ion-toolbar>
-      </ion-header>
-    
-      <div id="container">
-        <strong>Ready to create an app?</strong>
-        <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-      </div>
+      <img :src="src"/>
     </ion-content>
   </ion-page>
 </template>
 
 <script lang="ts">
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/vue';
+import { Capacitor, Filesystem, FilesystemDirectory } from "@capacitor/core";
+
 import { defineComponent } from 'vue';
 
 export default defineComponent({
@@ -33,7 +26,30 @@ export default defineComponent({
     IonPage,
     IonTitle,
     IonToolbar
+  },
+  data() {
+    return {
+      src: ''
+    }
+  },
+  methods: {
+    async ionViewWillEnter() {
+      const base64Data = 'iVBORw0KGgoAAAANSUhEUgAAABkAAAAbCAYAAACJISRoAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAA'
+                  + 'EnQAABJ0Ad5mH3gAAABVSURBVEhLtcgxFYAwEECxeoKHGKh/G4eBjL9Dlqx1vXMcs8asMWvMGrPGrDFrzBqzxqwxa8was8as'
+                  + 'MWvMGrPGrDFrzBqzxqwxa8zaur85bj17ztrzA6hlFRB6JuNPAAAAAElFTkSuQmCC';
+
+      const savedPhotoFile = await Filesystem.writeFile({
+        path: "myFile.png",
+        data: base64Data,
+        directory: FilesystemDirectory.Documents
+      });
+
+      const savedPhoto = Capacitor.convertFileSrc(savedPhotoFile.uri);
+      this.src = savedPhoto;
+    }
   }
+
+  
 });
 </script>
 
